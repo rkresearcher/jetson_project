@@ -1,9 +1,8 @@
 import os
 import pandas as pd
 import xlrd
-fl_file = xlrd.open_workbook("Data Set Link sources.xlsx")
-sheet = fl_file.sheet_by_index(0)
-print (sheet.cell_value(0,0))
-for i in range(2,sheet.nrows):
-	link = sheet.cell_value(i,1)
-	os.system("youtube-dl "+ link)
+fl_file  = pd.read_excel('Data Set Link sources.xlsx', index_col=0)
+
+for i in range(len(fl_file['Link'])):
+	os.system("youtube-dl -u rahul007ks@gmail.com -p Ra2hu4l5# "+ fl_file['Link'][i])
+	print("Done")
