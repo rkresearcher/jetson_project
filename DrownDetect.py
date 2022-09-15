@@ -18,8 +18,8 @@ class Camera:
         
         self.cam =CamGear(source='https://www.youtube.com/watch?v=zGVITGPj7Mk', stream_mode = True, logging=True).start()  #ass the name of the video here with correct directory name in my case the directory is data
 
-        self.WIDTH = 1024 # only for testing update according to the video
-        self.HEIGHT = 512
+        self.WIDTH = 512 # only for testing update according to the video
+        self.HEIGHT = 1024
 
         self.center_x = self.WIDTH / 2
         self.center_y = self.HEIGHT / 2
@@ -52,6 +52,7 @@ class Camera:
             self.ret = True
             while self.ret:
                 np_image = self.cam.read()
+               # np_image = cv2.resize(np_image,(self.WIDTH,self.HEIGHT))
                 if np_image is None:
                     print("None") 
                     continue
@@ -206,36 +207,37 @@ class Camera:
     def show(self):
         while True:
             frame = self.data
+            
             if frame is not None:
                 cv2.imshow('SMS', frame)
                 cv2.setMouseCallback('SMS', self.mouse_callback)
-            key = cv2.waitKey(1)
-            if key == ord('q'):
-                # q : close
-                self.release()
-                cv2.destroyAllWindows()
-                break
+                
+            
+        self.release()
+        cv2.destroyAllWindows()
+              #   break
 
-            elif key == ord('z'):
+            #elif key == ord('z'):
                 # z : zoom - in
-                self.zoom_in()
+             #   self.zoom_in()
 
-            elif key == ord('x'):
-                # x : zoom - out
-                self.zoom_out()
+#            elif key == ord('x'):
+ #               # x : zoom - out
+  #              self.zoom_out()
 
-            elif key == ord('p'):
-                # p : take picture and save image (image folder)
-                self.save_picture()
+#            elif key == ord('p'):
+ #               # p : take picture and save image (image folder)
+  #              self.save_picture()
 
-            elif key == ord('v'):
-                self.touch_init()
+   #         elif key == ord('v'):
+    #            self.touch_init()
 
-            elif key == ord('r'):
-                self.recording = not self.recording
-                if self.recording:
-                    t = Thread(target=cam.record_video)
-                    t.start()
+     #       elif key == ord('r'):
+      #          self.recording = not self.recording
+       #         if self.recording:
+        #            t = Thread(target=cam.record_video)
+         #           t.start()
+            
 
     def release(self):
         self.cam.release()
