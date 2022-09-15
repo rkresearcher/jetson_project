@@ -54,7 +54,7 @@ class Camera:
                 np_image = self.cam.read()
                # np_image = cv2.resize(np_image,(self.WIDTH,self.HEIGHT))
                 if np_image is None:
-                    print("None") 
+                   
                     continue
                 if self.mirror:
                     
@@ -70,18 +70,16 @@ class Camera:
                 newb = 0
                 frame = np_image
                 bbox, label, conf,p_id = cv.detect_common_objects(frame)
-                print (label)
-                print (bbox)
                 # calculating the average of label[j]
                 newb=time.time()
                 act = newb-age
                 age = newb 
                 j = 0
-                if len(bbox) >=0:
-                   
+                if len(bbox) >=0: 
                  for i in bbox:
                     if label[j] == 'person':
-                       if 0<i[3]<=700: # at point i am taking 250 ad the thereshold. i will upload the code on github
+                       print (i[3]);
+                       if 0<i[3]<=150: # at point i am taking 250 ad the thereshold. i will upload the code on github
                          isDrowning = True
                          np_image = out = draw_bbox(frame, i, label[j], conf[j],isDrowning,act)
                        else:
@@ -89,13 +87,8 @@ class Camera:
                             isDrowning = False
                             np_image = out = draw_bbox(frame, i, label[j], conf[j],isDrowning,act)
                     j  = j+1
-                ##########
-                 
+                
                 self.data = np_image
-                k = cv2.waitKey(1)
-                if k == ord('q'):
-                    self.release()
-                    break
 
         Thread(target=streaming).start()
 
@@ -207,36 +200,30 @@ class Camera:
     def show(self):
         while True:
             frame = self.data
-            
             if frame is not None:
                 cv2.imshow('SMS', frame)
                 cv2.setMouseCallback('SMS', self.mouse_callback)
-                
-            cv2.waitKey(0)
-        self.release()
+            key = cv2.waitKey(1) & 0xFF
+            if key == ord('q'):
+                break
         cv2.destroyAllWindows()
-              #   break
-
-            #elif key == ord('z'):
+#for future aspect
+#            elif key == ord('z'):
                 # z : zoom - in
-             #   self.zoom_in()
-
+#                self.zoom_in()
 #            elif key == ord('x'):
- #               # x : zoom - out
-  #              self.zoom_out()
-
+#                # x : zoom - out
+#                self.zoom_out()
 #            elif key == ord('p'):
- #               # p : take picture and save image (image folder)
-  #              self.save_picture()
-
-   #         elif key == ord('v'):
-    #            self.touch_init()
-
-     #       elif key == ord('r'):
-      #          self.recording = not self.recording
-       #         if self.recording:
-        #            t = Thread(target=cam.record_video)
-         #           t.start()
+#                # p : take picture and save image (image folder)
+#                self.save_picture()
+#            elif key == ord('v'):
+#                self.touch_init()
+#            elif key == ord('r'):
+#                self.recording = not self.recording
+#                if self.recording:
+#                    t = Thread(target=cam.record_video)
+#                    t.start()
             
 
     def release(self):
@@ -250,10 +237,10 @@ class Camera:
         elif event == cv2.EVENT_RBUTTONDOWN:
             self.zoom_out()
         elif event == None:
-            break
+            pass
 
 
 if __name__ == '__main__':
-    cam = Camera(mirror=True)
+    cam = Camera()
     cam.stream()
     cam.show()
