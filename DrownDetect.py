@@ -212,7 +212,7 @@ class Camera:
                 cv2.imshow('SMS', frame)
                 cv2.setMouseCallback('SMS', self.mouse_callback)
                 
-            
+            cv2.waitKey(0)
         self.release()
         cv2.destroyAllWindows()
               #   break
@@ -249,6 +249,8 @@ class Camera:
             self.zoom_in()
         elif event == cv2.EVENT_RBUTTONDOWN:
             self.zoom_out()
+        elif event == None:
+            break
 
 
 if __name__ == '__main__':
