@@ -9,16 +9,17 @@ from object_detection import draw_bbox
 import cv2
 import time
 import numpy as np
+from vidgear.gears import CamGear
 
 
 class Camera:
     def __init__(self, mirror=False):
         self.data = None
         
-        self.cam = cv2.VideoCapture('data/Wavepool Lifeguard Rescue 58 - Spot the Drowning!-YgUglYhVSkk.mp4')
+        self.cam =CamGear(source='https://www.youtube.com/watch?v=zGVITGPj7Mk', stream_mode = True, logging=True).start()  #ass the name of the video here with correct directory name in my case the directory is data
 
-        self.WIDTH = self.cam.get(cv2.CAP_PROP_FRAME_WIDTH)
-        self.HEIGHT = self.cam.get(cv2.CAP_PROP_FRAME_HEIGHT)
+        self.WIDTH = 1024 # only for testing update according to the video
+        self.HEIGHT = 512
 
         self.center_x = self.WIDTH / 2
         self.center_y = self.HEIGHT / 2
@@ -28,15 +29,15 @@ class Camera:
         self.video_queue = Queue()
 
         self.scale = 1
-        self.__setup()
+        #self.__setup()
 
         self.recording = False
 
         self.mirror = mirror
 
     def __setup(self):
-        self.cam.set(cv2.CAP_PROP_FRAME_WIDTH, self.WIDTH)
-        self.cam.set(cv2.CAP_PROP_FRAME_HEIGHT, self.HEIGHT)
+        #self.cam.set(cv2.CAP_PROP_FRAME_WIDTH, self.WIDTH)
+        #self.cam.set(cv2.CAP_PROP_FRAME_HEIGHT, self.HEIGHT)
         time.sleep(2)
 
     def get_location(self, x, y):
@@ -50,8 +51,9 @@ class Camera:
             
             self.ret = True
             while self.ret:
-                self.ret, np_image = self.cam.read()
+                np_image = self.cam.read()
                 if np_image is None:
+                    print("None") 
                     continue
                 if self.mirror:
                     
@@ -67,23 +69,27 @@ class Camera:
                 newb = 0
                 frame = np_image
                 bbox, label, conf,p_id = cv.detect_common_objects(frame)
+                print (label)
+                print (bbox)
                 # calculating the average of label[j]
                 newb=time.time()
                 act = newb-age
                 age = newb 
                 j = 0
-                for i in bbox:
-                   if label[j] == 'person':
-                      if 0<i[3]<=250:
+                if len(bbox) >=0:
+                   
+                 for i in bbox:
+                    if label[j] == 'person':
+                       if 0<i[3]<=700: # at point i am taking 250 ad the thereshold. i will upload the code on github
                          isDrowning = True
-                         out = draw_bbox(frame, i, label[j], conf[j],isDrowning,act)
-                      else:
+                         np_image = out = draw_bbox(frame, i, label[j], conf[j],isDrowning,act)
+                       else:
                             print ("No Drowning")
                             isDrowning = False
-                            out = draw_bbox(frame, i, label[j], conf[j],isDrowning,act)
-                   j = j+1
+                            np_image = out = draw_bbox(frame, i, label[j], conf[j],isDrowning,act)
+                    j  = j+1
                 ##########
-                np_image = out
+                 
                 self.data = np_image
                 k = cv2.waitKey(1)
                 if k == ord('q'):

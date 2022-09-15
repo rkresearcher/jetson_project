@@ -61,7 +61,7 @@ def draw_bbox(img, bbox, labels, confidence, Drowning, write_conf=False):
     
     return img
     
-def detect_common_objects(image, confidence=0.5, nms_thresh=0.03):
+def detect_common_objects(image, confidence=0.5, nms_thresh=0.03):  ##nms_theresh and confidence level is used for the more person detection in the video.
 
     Height, Width = image.shape[:2]
     scale = 0.00392
